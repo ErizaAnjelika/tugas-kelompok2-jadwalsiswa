@@ -6,22 +6,54 @@ import DataTable from "react-data-table-component";
 function Jadwal() {
   //define state
   const [jadwal, setJadwal] = useState([]);
-  const [form, setForm] = useState({
-    mata_pelajaran: "",
-    nama_guru: "",
-    kode_kelas: "",
-    kode_jam: "",
-    kode_hari: "",
-  });
 
-  const handleSubmit = (e) => {
+  const [form, setForm] = useState({});
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    axios.post("http://localhost:5240/api/jadwal", form).then((response) => {
-      response;
-    });
+    console.log(form);
+    await axios
+      .post("http://localhost:5240/api/jadwal", form)
+      .then((response) => {
+        if (response.status === 200) {
+          alert("Data berhasil Ditambah");
+        }
+      });
     fetchData();
   };
 
+  const handleSubmitUpdate = async (e) => {
+    e.preventDefault();
+    await axios
+      .put("http://localhost:5240/api/jadwal/" + form.id_mapel, form)
+      .then((response) => {
+        if (response.status === 200) {
+          alert("Data berhasil diubah");
+        }
+      })
+      .catch((err) => console.log(err));
+    fetchData();
+  };
+
+  const handleDelete = (e) => {
+    const bool = confirm("ap[aasda");
+    if (!bool) {
+      return false;
+    }
+    hapus(e);
+  };
+
+  const hapus = async (e) => {
+    await axios
+      .delete("http://localhost:5240/api/jadwal/" + e.target.dataset.id)
+      .then((response) => {
+        if (response.status === 200) {
+          alert("Data berhasil dihapus");
+        }
+      })
+      .catch((err) => alert(err));
+    fetchData();
+  };
   const handleChange = (event) => {
     setForm({ ...form, [event.target.name]: event.target.value });
   };
@@ -39,8 +71,14 @@ function Jadwal() {
     const data = await response.data.data;
     //assign response data to state "datamahasiswa"
     setJadwal(data);
-    console.log("Data Siswa dari Server:", data);
   };
+
+  const modalShow = (e) => {
+    const data = jadwal.filter((data) => data.id_mapel == e.target.dataset.id);
+    // setDataOne(data);
+    setForm(data[0]);
+  };
+
   const columns = [
     {
       name: "Kelas",
@@ -78,21 +116,30 @@ function Jadwal() {
     },
     {
       name: "Action",
-      cell: () => (
+      cell: (row) => (
         <div className="action-buttons">
           <button
             className="edit-button"
             data-bs-toggle="modal"
             data-bs-target="#editModal"
+            data-id={row.id_mapel}
+            onClick={modalShow}
           >
             Edit
           </button>
-          <button className="delete-button">Delete</button>
+          <button
+            className="delete-button"
+            data-id={row.id_mapel}
+            onClick={handleDelete}
+          >
+            Delete
+          </button>
         </div>
       ),
       width: "200px",
     },
   ];
+
   return (
     <div className="card mt-4">
       <div className="container">
@@ -177,6 +224,7 @@ function Jadwal() {
                     >
                       <option selected="">Open this select menu</option>
                       <option value={7}>One</option>
+                      <option value={7}>One</option>
                     </select>
                   </div>
                   <div className="mb-3">
@@ -231,6 +279,132 @@ function Jadwal() {
                     data-bs-dismiss="modal"
                   >
                     Tambah
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <div
+          className="modal fade"
+          id="editModal"
+          tabIndex={-1}
+          aria-labelledby="exampleModalLabel"
+          aria-hidden="true"
+        >
+          <div className="modal-dialog modal-dialog-centered">
+            <div className="modal-content">
+              <form onSubmit={handleSubmitUpdate}>
+                <div className="modal-header">
+                  <h1 className="modal-title fs-5" id="exampleModalLabel">
+                    Edit Jadwal Pelajaran
+                  </h1>
+                  <button
+                    type="button"
+                    className="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Close"
+                  />
+                </div>
+                <div className="modal-body fs-5">
+                  <div className="mb-3">
+                    <label htmlFor="exampleInputEmail1" className="form-label">
+                      Mata Pelajaran
+                    </label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="exampleInputEmail1"
+                      aria-describedby="emailHelp"
+                      name="mata_pelajaran"
+                      onChange={handleChange}
+                      value={form.mata_pelajaran}
+                    />
+                  </div>
+                  <div className="mb-3">
+                    <label
+                      htmlFor="exampleInputPassword1"
+                      className="form-label"
+                    >
+                      Nama Pengajar
+                    </label>
+                    <input
+                      type="text"
+                      name="nama_guru"
+                      className="form-control"
+                      id="exampleInputPassword1"
+                      onChange={handleChange}
+                      value={form.nama_guru}
+                    />
+                  </div>
+                  <div className="mb-3">
+                    <label
+                      htmlFor="exampleInputPassword1"
+                      className="form-label"
+                    >
+                      Jam Pelajaran
+                    </label>
+                    <select
+                      className="form-select"
+                      aria-label="Default select example"
+                      name="kode_jam"
+                      onChange={handleChange}
+                    >
+                      <option value={7}>One</option>
+                    </select>
+                  </div>
+                  <div className="mb-3">
+                    <label
+                      htmlFor="exampleInputPassword1"
+                      className="form-label"
+                    >
+                      Hari
+                    </label>
+                    <select
+                      className="form-select"
+                      aria-label="Default select example"
+                      name="kode_hari"
+                      onChange={handleChange}
+                    >
+                      <option value={1}>One</option>
+                      <option value={2}>Two</option>
+                      <option value={3}>Three</option>
+                    </select>
+                  </div>
+                  <div className="mb-3">
+                    <label
+                      htmlFor="exampleInputPassword1"
+                      className="form-label"
+                    >
+                      Kelas
+                    </label>
+                    <select
+                      className="form-select"
+                      name="kode_kelas"
+                      aria-label="Default select example"
+                      onChange={handleChange}
+                    >
+                      <option value={5}>One</option>
+                      <option value={5}>One</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="modal-footer">
+                  <button
+                    type="button"
+                    className="btn btn-secondary"
+                    data-bs-dismiss="modal"
+                  >
+                    Close
+                  </button>
+                  <button
+                    type="submit"
+                    className="btn btn-primary"
+                    data-bs-dismiss="modal"
+                  >
+                    Save
                   </button>
                 </div>
               </form>
