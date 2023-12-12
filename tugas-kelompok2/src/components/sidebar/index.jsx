@@ -1,9 +1,14 @@
 import "./sidebar.css";
 import "bootstrap/js/dist/dropdown";
-import { Link } from "react-router-dom";
-import Siswa from "../siswa";
-import Jadwal from "../jadwal";
+import { Link, useNavigate } from "react-router-dom";
+
 const Sidebar = () => {
+  const navigate = useNavigate();
+  const handleLogout = () => {
+    sessionStorage.clear();
+    return navigate("/login");
+  };
+
   return (
     <>
       <div className="samping bg-dark col-auto col-md-4 col-lg-3 min-vh-100  d-flex flex-column justify-content-between">
@@ -49,14 +54,15 @@ const Sidebar = () => {
               </a>
             </li>
             <li className="nav-item py-2 py-sm-0">
-              <a
+              <Link
+                to="/jadwal"
                 href=""
                 className="nav-link text-white active"
                 aria-current="page"
               >
                 <i className="fs-4 bi bi-calendar-week"></i>
                 <span className="fs-5 d-none d-sm-inline ms-2">Jadwal</span>
-              </a>
+              </Link>
             </li>
           </ul>
         </div>
@@ -72,18 +78,16 @@ const Sidebar = () => {
             <i className="fs-4 bi bi-person-fill"></i>
             <span className="ms-2">User</span>
           </button>
+
           <div className="dropdown-menu" aria-labelledby="triggerId">
-            <button className="dropdown-item" href="#">
-              Action
+            <button className="dropdown-item" onClick={handleLogout}>
+              Log Out
             </button>
             <button className="dropdown-item" href="#">
               Profile
             </button>
           </div>
         </div>
-      </div>
-      <div className="ps-3 col content">
-        <Jadwal />
       </div>
     </>
   );
