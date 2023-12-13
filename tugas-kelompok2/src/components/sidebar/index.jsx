@@ -1,7 +1,14 @@
-import './sidebar.css';
-import 'bootstrap/js/dist/dropdown';
-import { Link } from 'react-router-dom';
+import "./sidebar.css";
+import "bootstrap/js/dist/dropdown";
+import { Link, useNavigate } from "react-router-dom";
+
 const Sidebar = () => {
+  const navigate = useNavigate();
+  const handleLogout = () => {
+    sessionStorage.clear();
+    return navigate("/login");
+  };
+
   return (
     <>
       <div className="samping bg-dark col-auto col-md-4 col-lg-3 min-vh-100  d-flex flex-column justify-content-between">
@@ -10,7 +17,9 @@ const Sidebar = () => {
             href=""
             className="d-flex text-decoration-none  mt-2 ms-3 align-items-center"
           >
-            <span className="fs-4 d-none d-sm-inline text-white fw-bold">Sidebar</span>
+            <span className="fs-4 d-none d-sm-inline text-white fw-bold">
+              Sidebar
+            </span>
           </a>
           <hr className="text-secondary" />
           <ul className="nav navbar-pills flex-column mt-2">
@@ -69,20 +78,12 @@ const Sidebar = () => {
             <i className="fs-4 bi bi-person-fill"></i>
             <span className="ms-2">User</span>
           </button>
-          <div
-            className="dropdown-menu"
-            aria-labelledby="triggerId"
-          >
-            <button
-              className="dropdown-item"
-              href="#"
-            >
-              Action
+
+          <div className="dropdown-menu" aria-labelledby="triggerId">
+            <button className="dropdown-item" onClick={handleLogout}>
+              Log Out
             </button>
-            <button
-              className="dropdown-item"
-              href="#"
-            >
+            <button className="dropdown-item" href="#">
               Profile
             </button>
           </div>
